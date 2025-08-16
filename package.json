@@ -29,7 +29,7 @@
     "url": "."
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config vite.config.dev.js",
     "build": "vite build",
     "preview": "vite preview",
     "build:production": "vite build --config vite.config_production.js",
