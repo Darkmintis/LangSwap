@@ -1,0 +1,89 @@
+{
+  "name": "langswap",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Professional code converter supporting 10 programming languages - JavaScript, Python, Java, TypeScript, C#, C++, PHP, Go, Rust, Kotlin",
+  "type": "module",
+  "keywords": [
+    "code converter",
+    "programming languages",
+    "javascript",
+    "python",
+    "java",
+    "typescript",
+    "csharp",
+    "cpp",
+    "php",
+    "go",
+    "rust",
+    "kotlin",
+    "ast",
+    "syntax",
+    "transpiler"
+  ],
+  "author": "LangSwap Team",
+  "license": "MIT",
+  "homepage": ".",
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:production": "vite build --config vite.config_production.js",
+    "preview:production": "vite preview --config vite.config_production.js",
+    "serve": "vite preview --port 3001",
+    "clean": "rm -rf dist",
+    "clean:win": "rmdir /s /q dist",
+    "build:clean": "npm run clean:win && npm run build:production",
+    "analyze": "npm run build:production && npx vite-bundle-analyzer dist",
+    "lint": "echo 'Linting not configured'",
+    "test": "echo 'Tests not configured'",
+    "typecheck": "echo 'TypeScript checking not configured'",
+    "format": "echo 'Code formatting not configured'"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "lucide-react": "^0.263.1",
+    "qrcode-generator": "^2.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-qr-code": "^2.0.18"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "terser": "^5.43.1",
+    "vite": "^4.4.5"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all",
+      "not ie 11"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "files": [
+    "dist",
+    "public",
+    "src",
+    "index.html",
+    "vite.config.js",
+    "vite.config_production.js",
+    "package.json",
+    "README.md"
+  ]
+}
