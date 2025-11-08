@@ -126,7 +126,7 @@ export default defineConfig({
   envPrefix: 'VITE_',
   
   // Base path for deployment - GitHub Pages serves from /repository-name/
-  base: '/LangSwap/',
+  base: '/langswap/',
   
   // ESBuild options
   esbuild: {
