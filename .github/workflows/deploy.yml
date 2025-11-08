@@ -1,52 +1,98 @@
-name: Deploy to GitHub Pages
+name: Deploy LangSwap to darkmintis-dev
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout
+      - name: Checkout LangSwap repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
-          
+
       - name: Install dependencies
         run: npm ci
-        
-      - name: Build project
+
+      - name: Build LangSwap
         run: npm run build
         env:
           NODE_ENV: production
-          GITHUB_ACTIONS: true
-        
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+
+      - name: Checkout darkmintis-dev
+        uses: actions/checkout@v4
         with:
-          path: './dist'
+          repository: Darkmintis/darkmintis-dev
+          token: ${{ secrets.DEPLOY_PAT }}
+          path: main-repo
+
+      - name: Copy built files to main repo
+        run: |
+          # Remove old deployment
+          rm -rf main-repo/dist/langswap
+          mkdir -p main-repo/dist/langswap
+
+          # Copy entire built dist folder
+          cp -r dist/* main-repo/dist/langswap/
           
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          # Copy additional files
+          cp LICENSE main-repo/dist/langswap/ 2>/dev/null || echo "No LICENSE file found"
+          cp README.md main-repo/dist/langswap/ 2>/dev/null || echo "No README file found"
+
+          echo "✅ Production files copied successfully"
+          echo "📦 Deployed files:"
+          ls -la main-repo/dist/langswap/
+
+      - name: Commit and push to darkmintis-dev
+        run: |
+          cd main-repo
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          # Add changes
+          git add dist/langswap/
+          
+          # Commit only if there are changes
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to deploy"
+          else
+            git commit -m "🔄 Update LangSwap from commit ${GITHUB_SHA:0:7}"
+            git push
+            echo "✅ Changes pushed successfully"
+          fi
+
+      - name: Deployment summary
+        run: |
+          echo "## 🎉 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tool**: LangSwap - Professional Code Converter" >> $GITHUB_STEP_SUMMARY
+          echo "- **Live URL**: https://darkmintis.dev/langswap" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${GITHUB_SHA:0:7}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Deployed Files" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ index.html" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ assets/ (bundled JS, CSS)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Monaco Editor (code editor)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ LICENSE" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ README.md" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### � Features Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "- � 10+ programming language support" >> $GITHUB_STEP_SUMMARY
+          echo "- � JavaScript, Python, Java, TypeScript" >> $GITHUB_STEP_SUMMARY
+          echo "- � C#, C++, PHP, Go, Rust, Kotlin" >> $GITHUB_STEP_SUMMARY
+          echo "- ⚡ Real-time code conversion" >> $GITHUB_STEP_SUMMARY
+          echo "- 🎨 Modern Monaco Editor" >> $GITHUB_STEP_SUMMARY
+          echo "- 📱 Responsive UI" >> $GITHUB_STEP_SUMMARY
+          echo "- 🌐 Client-side processing" >> $GITHUB_STEP_SUMMARY
+
